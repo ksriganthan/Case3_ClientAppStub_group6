@@ -34,13 +34,23 @@ public class MessageReceiver {
 	@Value("${client.id:group6}")
 	private String clientId;
 
+	@Value("${channel.topic.newJobs:group6.dispo.jobs.new}")
+	private String newJobsTopic;
+
 	// Neue Aufträge vom Topic empfangen
-	@JmsListener(destination = "group6.dispo.jobs.new", containerFactory = "myFactory")
+	@JmsListener(destination = "${channel.topic.newJobs}", containerFactory = "myFactory")
 	public void receiveJob(JobMessage job) {
 		// Optionaler Region-Filter (leer = alle Regionen anzeigen)
-		if (filterRegion != null && !filterRegion.isEmpty()
-				&& !filterRegion.equalsIgnoreCase(job.getRegion())) {
-			return;
+		if (filterRegion != null && !filterRegion.isEmpty()) {
+			String[] regions = filterRegion.split(",");
+			boolean match = false;
+			for (String r : regions) {
+				if (r.trim().equalsIgnoreCase(job.getRegion())) {
+					match = true;
+					break;
+				}
+			}
+			if (!match) return;
 		}
 		//JobType-Filter (leer = alle Typen anzeigen)
 		if (filterJobType != null && !filterJobType.isEmpty()
@@ -51,7 +61,7 @@ public class MessageReceiver {
 	}
 
 	// Zuweisungsantworten vom Topic empfangen
-	@JmsListener(destination = "group6.dispo.jobs.assignments", containerFactory = "myFactory")
+	@JmsListener(destination = "${channel.topic.assignments:group6.dispo.jobs.assignments}", containerFactory = "myFactory")
 	public void receiveAssignment(JobAssignmentMessage assignment) {
 		ui.assignJob(assignment);
 	}

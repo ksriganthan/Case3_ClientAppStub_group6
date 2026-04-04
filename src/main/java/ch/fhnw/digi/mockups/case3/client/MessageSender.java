@@ -19,6 +19,8 @@ public class MessageSender {
 	private MessageConverter jacksonJmsMessageConverter;
 	@Value("${client.id:group6}")
 	private String clientId;
+	@Value("${channel.queue.requestAssignment:group6.dispo.jobs.requestAssignment}")
+	private String requestAssignmentQueue;
 
 	void requestJobFromDispo(JobMessage job) {
 
@@ -30,7 +32,7 @@ public class MessageSender {
 		// An Queue senden (nicht Topic!)
 		jmsTemplate.setMessageConverter(jacksonJmsMessageConverter);
 		jmsTemplate.setPubSubDomain(false);
-		jmsTemplate.convertAndSend("group6.dispo.jobs.requestAssignment", request);
+		jmsTemplate.convertAndSend(requestAssignmentQueue, request);
 	}
 
 }
