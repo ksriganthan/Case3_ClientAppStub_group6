@@ -107,18 +107,26 @@ public class UI extends JFrame {
 	public void assignJob(JobAssignmentMessage c) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				synchronized (m_list_jobs_model) {
-					for (int x = 0; x < m_list_jobs_model.getSize(); ++x) {
-						if (m_list_jobs_model.get(x).getJobId().equals(c.getJobId())) {
-							m_list_jobs_model.remove(x);
-							break;
+				if (c.isAssigned()) {
+					// Zugewiesen: Job aus offener Liste entfernen und in zugewiesene Liste verschieben
+					synchronized (m_list_jobs_model) {
+						for (int x = 0; x < m_list_jobs_model.getSize(); ++x) {
+							if (m_list_jobs_model.get(x).getJobId().equals(c.getJobId())) {
+								m_list_jobs_model.remove(x);
+								break;
+							}
 						}
 					}
-				}
-
-				synchronized (m_list_assignments_model) {
-					m_list_assignments_model.add(0,
-							"Job " + c.getJobId() + " wurde an \"" + c.getClientId() + "\" vergeben");
+					synchronized (m_list_assignments_model) {
+						m_list_assignments_model.add(0,
+								"Job " + c.getJobId() + " ZUGEWIESEN an \"" + c.getClientId() + "\"");
+					}
+				} else {
+					// Abgelehnt: Job bleibt in offener Liste, nur Hinweis anzeigen
+					synchronized (m_list_assignments_model) {
+						m_list_assignments_model.add(0,
+								"Job " + c.getJobId() + " ABGELEHNT für \"" + c.getClientId() + "\"");
+					}
 				}
 			}
 		});
