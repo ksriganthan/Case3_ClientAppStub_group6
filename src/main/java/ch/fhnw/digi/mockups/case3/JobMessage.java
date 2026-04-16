@@ -8,15 +8,24 @@ public class JobMessage {
 	private String description;
 	private String region;
 	private String jobType; // "repair" oder "maintenance"
+	private String  scheduledDateTime;
 
 	public JobMessage() {
 	}
 
-	public JobMessage(String jobId, String description, String region, String jobType) {
+	public JobMessage(String jobId, String description, String region, String jobType, String scheduledDateTime) {
 		this.jobId = jobId;
 		this.description = description;
 		this.region = region;
 		this.jobType = jobType;
+		this.scheduledDateTime = scheduledDateTime;
+	}
+
+	public String getScheduledDateTime() {
+		return scheduledDateTime;
+	}
+	public void setScheduledDateTime(String scheduledDateTime) {
+		this.scheduledDateTime = scheduledDateTime;
 	}
 
 	public String getJobId() {
